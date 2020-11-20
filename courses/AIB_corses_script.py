@@ -41,9 +41,8 @@ course_data = {'Level_Code': '', 'University': 'Australian Institute of Business
                'Availability': 'A', 'Description': '','Career_Outcomes': '', 'Online': '', 'Offline': '', 'Distance': '',
                'Face_to_Face': '', 'Blended': '', 'Remarks': ''}
 
-possible_cities = {
-                   'online': 'Online', 'mixed': 'Online', 'brisbane': 'Brisbane', 'sydney': 'Sydney',
-                   'melbourne': 'Melbourne', 'perth': 'Perth'}
+possible_cities = {'online': 'Online', 'mixed': 'Online', 'brisbane': 'Brisbane', 'sydney': 'Sydney',
+                   'melbourne': 'Melbourne', 'perth': 'Perth', 'adelaide': 'Adelaide'}
 
 possible_languages = {'Japanese': 'Japanese', 'French': 'French', 'Italian': 'Italian', 'Korean': 'Korean',
                       'Indonesian': 'Indonesian', 'Chinese': 'Chinese', 'Spanish': 'Spanish'}
@@ -136,3 +135,42 @@ for each_url in course_links_file:
             if fee is not None:
                 course_data['Local_Fees'] = fee.group()
                 print('LOCAL FEES: ', fee.group())
+
+    # CITY
+    actual_cities.append('adelaide')
+
+    # DURATION
+    duration_div = soup.find('div', text=re.compile('duration', re.IGNORECASE))
+    duration_h = soup.find('h3', text=re.compile('How long will it take to complete?', re.IGNORECASE))
+    if duration_div:
+        duration = duration_div.find_next_sibling('strong')
+        if duration:
+            duration_text = duration.get_text().lower()
+            converted_duration = dura.convert_duration(duration_text)
+            if converted_duration is not None:
+                duration_l = list(converted_duration)
+                if duration_l[0] == 1 and 'Years' in duration_l[1]:
+                    duration_l[1] = 'Year'
+                if duration_l[0] == 1 and 'Months' in duration_l[1]:
+                    duration_l[1] = 'Month'
+                course_data['Duration'] = duration_l[0]
+                course_data['Duration_Time'] = duration_l[1]
+                print('COURSE DURATION: ', str(duration_l[0]) + ' / ' + duration_l[1])
+    elif '30-Day' in course_data['Course']:
+        course_data['Duration'] = '1'
+        course_data['Duration_Time'] = 'Month'
+        print('COURSE DURATION: ', course_data['Duration'] + ' / ' + course_data['Duration_Time'])
+    elif duration_h:
+        duration = duration_h.find_next_sibling('p')
+        if duration:
+            duration_text = duration.get_text().lower()
+            converted_duration = dura.convert_duration(duration_text)
+            if converted_duration is not None:
+                duration_l = list(converted_duration)
+                if duration_l[0] == 1 and 'Years' in duration_l[1]:
+                    duration_l[1] = 'Year'
+                if duration_l[0] == 1 and 'Months' in duration_l[1]:
+                    duration_l[1] = 'Month'
+                course_data['Duration'] = duration_l[0]
+                course_data['Duration_Time'] = duration_l[1]
+                print('COURSE DURATION: ', str(duration_l[0]) + ' / ' + duration_l[1])
