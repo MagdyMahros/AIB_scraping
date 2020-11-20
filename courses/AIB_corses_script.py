@@ -93,3 +93,30 @@ for each_url in course_links_file:
             else:
                 course_data['Course_Lang'] = 'English'
         print('COURSE LANGUAGE: ', course_data['Course_Lang'])
+
+    # DESCRIPTION
+    desc_block = soup.find('div', attrs={"id": "block1"})
+    desc_block_1 = soup.find('div', attrs={"id": "tag-overview"})
+    desc_ = soup.find('p', class_='intro')
+    if desc_block:
+        desc_container = desc_block.find('div', class_='container')
+        if desc_container:
+            desc_p = desc_container.find('p')
+            if desc_p:
+                desc = desc_p.get_text().strip()
+                course_data['Description'] = desc
+                print('COURSE DESCRIPTION: ', desc)
+    elif desc_:
+        desc = desc_.get_text().strip()
+        course_data['Description'] = desc
+        print('COURSE DESCRIPTION: ', desc)
+    elif desc_block_1:
+        desc_container = desc_block_1.find('div', class_='container')
+        if desc_container:
+            desc_p = desc_container.find('p')
+            if desc_p:
+                desc = desc_p.get_text().strip()
+                course_data['Description'] = desc
+                print('COURSE DESCRIPTION: ', desc)
+
+
