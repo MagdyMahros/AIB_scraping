@@ -119,4 +119,20 @@ for each_url in course_links_file:
                 course_data['Description'] = desc
                 print('COURSE DESCRIPTION: ', desc)
 
-
+    # FEES
+    fee_a_tag = soup.find('a', text=re.compile('CALCULATE THE IMPACT OF FEE-HELP ON YOUR INCOME', re.IGNORECASE))
+    fee_p_tag = soup.find('p', text=re.compile(r'Total Upfront Cost \(2020\)',re.IGNORECASE ))
+    if fee_a_tag:
+        fee_p = fee_a_tag.find_previous_sibling('p')
+        if fee_p:
+            fee = re.search(r'\d+,\d+', fee_p.get_text())
+            if fee is not None:
+                course_data['Local_Fees'] = fee.group()
+                print('LOCAL FEES: ', fee.group())
+    elif fee_p_tag:
+        fee_h = fee_p_tag.find_previous_sibling('h3')
+        if fee_h:
+            fee = re.search(r'\d+,\d+', fee_h.get_text())
+            if fee is not None:
+                course_data['Local_Fees'] = fee.group()
+                print('LOCAL FEES: ', fee.group())
